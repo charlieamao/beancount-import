@@ -36,6 +36,7 @@ from . import reconcile
 from . import training
 from . import matching
 from .source import Source, InvalidSourceReference
+import urllib
 
 
 def init_tornado_asyncio():
@@ -302,6 +303,17 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             self.send_state_update()
         except:
             traceback.print_exc()
+
+    def check_origin(self, origin):
+        # Parse the origin URL to extract the hostname
+        parsed_origin = urllib.parse.urlparse(origin)
+        origin_hostname = parsed_origin.hostname
+
+        # Allow WebSocket connection if the origin hostname matches the specified IP
+        if origin_hostname == "68.183.202.114":
+            return True
+        else:
+            return super().check_origin(origin)            
 
     def on_message(self, message):
         try:
